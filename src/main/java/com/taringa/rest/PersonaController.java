@@ -1,8 +1,8 @@
 package com.taringa.rest;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.net.URI;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import com.taringa.dto.PersonaDto;
 import com.taringa.entity.Persona;
 import com.taringa.exception.NotFoundException;
 import com.taringa.services.PersonaServices;
@@ -45,19 +46,26 @@ public class PersonaController {
 	
 	@GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
 	//public ResponseEntity<Persona> listarPorId(@PathVariable("id") Long id) { // forma normal
-	public EntityModel<Persona> listarPorId(@PathVariable("id") Long id) {
-		 Optional<Persona> persona = personaServices.findById(id);
-		 if(! persona.isPresent()) {
+	public EntityModel<PersonaDto> listarPorId(@PathVariable("id") Long id) {
+		 PersonaDto persona = personaServices.findByIdDto(id);
+		 if( persona == null) {
 			 throw new NotFoundException("ID NO ENCONTRADO " + id);
 		 }
 		 //return new ResponseEntity<Persona>(persona.get(),HttpStatus.OK); // forma normal
-		 EntityModel<Persona> model = EntityModel.of(persona.get());
+		 persona.add(linkTo(methodOn(PersonaController.class)
+                 .listarPorId(id)).withSelfRel());
+		 EntityModel<PersonaDto> model = EntityModel.of(persona);
 		 return model;
 	}
 	
 	@GetMapping(value="/pageable",produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<Persona>> listarPageable(Pageable pageable){
-		return new ResponseEntity<Page<Persona>>(personaServices.findAll(pageable),HttpStatus.OK);
+	public ResponseEntity<Page<PersonaDto>> listarPageable(Pageable pageable){
+		Page<PersonaDto> entidadLista = personaServices.findAll(pageable);
+		for (final PersonaDto dto : entidadLista) {
+			 dto.add(linkTo(methodOn(PersonaController.class)
+	                    .listarPorId(dto.getId())).withSelfRel());
+		}
+		return new ResponseEntity<Page<PersonaDto>>(entidadLista,HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/{id}") 

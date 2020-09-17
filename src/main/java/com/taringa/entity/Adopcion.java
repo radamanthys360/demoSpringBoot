@@ -2,6 +2,10 @@ package com.taringa.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
 
@@ -15,23 +19,24 @@ public class Adopcion implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
 
-	@Column(name="estado")
+	@Column(name="estado",nullable=false,length = 50)
+	@Size(min=1,message="Minimo de 1 caracter")
 	private String estado;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name="fecha")
+	@Column(name="fecha",nullable=false)
 	private Date fecha;
 
 	@OneToOne
-    @JoinColumn(name = "id_mascota", referencedColumnName = "ID")
+	@JoinColumn(name = "idMascota", referencedColumnName = "ID",nullable=false)
 	private Mascota idMascota;
 
 	@OneToOne
-    @JoinColumn(name = "id_persona", referencedColumnName = "ID")
+    @JoinColumn(name = "id_persona", referencedColumnName = "ID",nullable=false)
 	private Persona idPersona;
 
 	public Adopcion() {
@@ -67,6 +72,7 @@ public class Adopcion implements Serializable {
 
 	public void setIdMascota(Mascota idMascota) {
 		this.idMascota = idMascota;
+		//idMascota.getAdopciones().add(this);
 	}
 
 	public Persona getIdPersona() {
