@@ -58,18 +58,6 @@ public class MascotaController {
 		 return model;
 	}
 	
-	
-//	@GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-//	//public ResponseEntity<Mascota> listarPorId(@PathVariable("id") Long id) { // forma normal
-//	public EntityModel<Mascota> listarPorId(@PathVariable("id") Long id) {
-//		Mascota mascota = mascotaServices.findById2(id);
-//		 if(mascota == null) {
-//			 throw new NotFoundException("ID NO ENCONTRADO " + id);
-//		 }
-//		 EntityModel<Mascota> model = EntityModel.of(mascota);
-//		 return model;
-//	}
-	
 	@GetMapping(value="/pageable",produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<MascotaDto>> listarPageable(Pageable pageable){
 		Page<MascotaDto> entidadLista = mascotaServices.findAll(pageable);

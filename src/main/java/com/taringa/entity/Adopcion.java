@@ -4,8 +4,6 @@ import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.Date;
 
 
@@ -72,7 +70,6 @@ public class Adopcion implements Serializable {
 
 	public void setIdMascota(Mascota idMascota) {
 		this.idMascota = idMascota;
-		//idMascota.getAdopciones().add(this);
 	}
 
 	public Persona getIdPersona() {

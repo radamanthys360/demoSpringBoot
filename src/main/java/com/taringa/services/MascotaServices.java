@@ -27,27 +27,11 @@ public class MascotaServices {
 	public MascotaDto findById(Long id) {
 		Optional<Mascota> entidad = mascotaRepository.findById(id);
 		if(entidad.isPresent()) {
-			try {
-				return modelMapper.map(entidad.get(), MascotaDto.class);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return modelMapper.map(entidad.get(), MascotaDto.class);
 		}else {
 			return null;
 		}
-		return null;
 	}
-	
-//	@Transactional
-//	public Mascota findById2(Long id) {
-//		Optional<Mascota> entidad = mascotaRepository.findById(id);
-//		if(entidad.isPresent()) {
-//			return entidad.get();
-//		}else {
-//			return null;
-//		}
-//	}
 	
 	public Page<MascotaDto> findAll(Pageable pageable) {
 		Page<Mascota> listaEntidad = mascotaRepository.findAll(pageable);
