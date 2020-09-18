@@ -1,0 +1,226 @@
+// para la creacion de la base de datos poseo un usuario llamado postgres
+CREATE DATABASE demo_app
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Spanish_El Salvador.1252'
+    LC_CTYPE = 'Spanish_El Salvador.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+GRANT ALL ON DATABASE demo_app TO postgres;
+
+GRANT TEMPORARY, CONNECT ON DATABASE demo_app TO PUBLIC;
+
+//tabla persona 
+CREATE TABLE public.app_persona
+(
+    clave character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    direccion character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    documento_identidad character varying(12) COLLATE pg_catalog."default" NOT NULL,
+    id bigint NOT NULL,
+    nombre character varying(70) COLLATE pg_catalog."default" NOT NULL,
+    usuario character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    fecha_nacimiento date NOT NULL,
+    sexo character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT app_persona_pkey PRIMARY KEY (id),
+    CONSTRAINT sexo_persona CHECK (sexo::text = ANY (ARRAY['MASCULINO'::character varying::text, 'FEMENINO'::character varying::text]))
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.app_persona
+    OWNER to postgres;
+
+GRANT ALL ON TABLE public.app_persona TO postgres;
+
+// tabla mascota
+CREATE TABLE public.app_mascota
+(
+    id bigint NOT NULL,
+    raza character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    nombre character varying(40) COLLATE pg_catalog."default",
+    edad integer NOT NULL,
+    descripcion character varying(500) COLLATE pg_catalog."default" NOT NULL,
+    sexo character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    tamano character varying(20) COLLATE pg_catalog."default",
+    imagen bytea,
+    castrado character varying(1) COLLATE pg_catalog."default",
+    esterilizada character varying(1) COLLATE pg_catalog."default",
+    proceso character varying(1) COLLATE pg_catalog."default",
+    CONSTRAINT app_mascota_pkey PRIMARY KEY (id),
+    CONSTRAINT sexo_mascota CHECK (sexo::text = ANY (ARRAY['MACHO'::character varying::text, 'HEMBRA'::character varying::text]))
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.app_mascota
+    OWNER to postgres;
+
+// tabla adopciones
+CREATE TABLE public.app_adopcion
+(
+    id bigint NOT NULL,
+    id_mascota bigint NOT NULL,
+    id_persona bigint NOT NULL,
+    fecha date NOT NULL,
+    estado character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT app_adopcion_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_mascota FOREIGN KEY (id_mascota)
+        REFERENCES public.app_mascota (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_persona FOREIGN KEY (id_persona)
+        REFERENCES public.app_persona (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT estados_adopcion CHECK (estado::text = ANY (ARRAY['CREADA'::character varying::text, 'EN_ESPERA'::character varying::text, 'EVALUANDO'::character varying::text, 'CANCELADA'::character varying::text, 'ACEPTADA'::character varying::text, 'APELANDO'::character varying::text]))
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.app_adopcion
+    OWNER to postgres;
+
+// la secuencia que usamos para insertar los registros
+CREATE SEQUENCE public.hibernate_sequence
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.hibernate_sequence
+    OWNER TO postgres;   
+    
+post y put con json en el body raw
+http://localhost:8080/demoTaringa/api/personas
+
+// para buscar get y eliminar deletemaping
+http://localhost:8080/demoTaringa/api/personas/1
+
+//traer paginado con get
+http://localhost:8080/demoTaringa/api/personas/pageable?page=0&size=20
+
+----personas
+{
+    "clave": "123456",
+    "direccion": "La libertad colonia el pino",
+    "documentoIdentidad": "4562-8900-12",
+    "fechaNacimiento": "12-12-1991",
+    "nombre": "Luis Enrique Morataya Ramos",
+	"sexo": "MASCULINO",
+	"usuario": "luisEnrique"
+}
+
+
+{
+    "id": 9,
+    "clave": "123456",
+    "direccion": "La libertad colonia Quezalte",
+    "documentoIdentidad": "4562-8900-12",
+    "fechaNacimiento": "12-12-1991",
+    "nombre": "Luis Enrique Morataya Ramos",
+	"sexo": "MASCULINO",
+	"usuario": "luisEnrique"
+}
+----personas
+
+
+http://localhost:8080/demoTaringa/api/mascotas
+
+// para buscar get y eliminar deletemaping
+http://localhost:8080/demoTaringa/api/mascotas/10
+
+//traer paginado con get
+http://localhost:8080/demoTaringa/api/mascotas/pageable?page=0&size=20
+
+----mascotas
+{
+    "castrado": "S",
+	"descripcion": "Gato negro",
+	"edad": 1,
+	"nombre": "jamon",
+	"raza": "mixta",
+	"raza": "mixta",
+	"sexo": "MACHO",
+	"tamano": "25 cm"
+}
+
+{
+    "id": 10,
+    "castrado": "S",
+	"descripcion": "Gato negro con blanco",
+	"edad": 1,
+	"nombre": "jamon",
+	"raza": "mixta",
+	"raza": "mixta",
+	"sexo": "MACHO",
+	"tamano": "25 cm"
+}
+http://localhost:8080/demoTaringa/api/adopcion
+
+http://localhost:8080/demoTaringa/api/adopcion/7
+
+//traer paginado con get
+http://localhost:8080/demoTaringa/api/adopcion/pageable?page=0&size=20
+
+-- ADOPCION
+{
+    "estado": "CREADA",
+    "fecha": "2020-09-17",
+    "idMascota": {
+		"id": 10,
+		"castrado": "S",
+		"descripcion": "Gato negro con blanco",
+		"edad": 1,
+		"nombre": "jamon",
+		"raza": "mixta",
+		"raza": "mixta",
+		"sexo": "MACHO",
+		"tamano": "25 cm"
+    },
+    "idPersona": {
+		"id": 9,
+		"clave": "123456",
+		"direccion": "La libertad colonia Quezalte",
+		"documentoIdentidad": "4562-8900-12",
+		"fechaNacimiento": "12-12-1991",
+		"nombre": "Luis Enrique Morataya Ramos",
+		"sexo": "MASCULINO",
+		"usuario": "luisEnrique"
+    }
+}
+
+{
+    "id": 7,
+    "estado": "CANCELADA",
+    "fecha": "2020-09-17",
+    "idMascota": {
+		"id": 10,
+		"castrado": "S",
+		"descripcion": "Gato negro con blanco",
+		"edad": 1,
+		"nombre": "jamon",
+		"raza": "mixta",
+		"raza": "mixta",
+		"sexo": "MACHO",
+		"tamano": "25 cm"
+    },
+    "idPersona": {
+		"id": 9,
+		"clave": "123456",
+		"direccion": "La libertad colonia Quezalte",
+		"documentoIdentidad": "4562-8900-12",
+		"fechaNacimiento": "12-12-1991",
+		"nombre": "Luis Enrique Morataya Ramos",
+		"sexo": "MASCULINO",
+		"usuario": "luisEnrique"
+    }
+}
