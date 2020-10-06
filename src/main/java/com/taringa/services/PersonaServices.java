@@ -32,6 +32,14 @@ public class PersonaServices {
 		}
 	}
 	
+	public Boolean findByUsuario(String nombreUsuario) {
+		if(personaRepository.findByUsuarioEquals(nombreUsuario).isPresent()) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
 	public Page<PersonaDto> findAll(Pageable pageable) {
 		Page<Persona> listaEntidad = personaRepository.findAll(pageable);
 		return listaEntidad.map(objectEntity  -> modelMapper.map(objectEntity, PersonaDto.class));

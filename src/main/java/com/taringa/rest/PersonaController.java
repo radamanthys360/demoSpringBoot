@@ -10,6 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.taringa.exception.NotFoundException;
 import com.taringa.services.PersonaServices;
 
 @RequestMapping("/api/personas")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class PersonaController {
 	
@@ -71,6 +73,11 @@ public class PersonaController {
 	@DeleteMapping(value = "/{id}") 
 	public void eliminar(@PathVariable("id") Long id) {
 		personaServices.delete(id);
+	}
+	
+	@GetMapping(value="/findByUsuario/{nombreUsuario}",produces = MediaType.APPLICATION_JSON_VALUE)
+	public Boolean  findByUsuario(@PathVariable("nombreUsuario") String nombreUsuario){
+		return personaServices.findByUsuario(nombreUsuario);
 	}
 	
 }
