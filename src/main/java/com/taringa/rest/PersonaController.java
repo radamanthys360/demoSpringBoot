@@ -26,7 +26,7 @@ import com.taringa.exception.NotFoundException;
 import com.taringa.services.PersonaServices;
 
 @RequestMapping("/api/personas")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 public class PersonaController {
 	
@@ -63,6 +63,17 @@ public class PersonaController {
 	@GetMapping(value="/pageable",produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<PersonaDto>> listarPageable(Pageable pageable){
 		Page<PersonaDto> entidadLista = personaServices.findAll(pageable);
+		for (final PersonaDto dto : entidadLista) {
+			 dto.add(linkTo(methodOn(PersonaController.class)
+	                    .listarPorId(dto.getId())).withSelfRel());
+		}
+		return new ResponseEntity<Page<PersonaDto>>(entidadLista,HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/{texto}/pageable",produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<PersonaDto>> buscarPageable(@PathVariable("texto") String texto,
+			                                               Pageable pageable){
+		Page<PersonaDto> entidadLista = personaServices.findAllText(texto, pageable);
 		for (final PersonaDto dto : entidadLista) {
 			 dto.add(linkTo(methodOn(PersonaController.class)
 	                    .listarPorId(dto.getId())).withSelfRel());

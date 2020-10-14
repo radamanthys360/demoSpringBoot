@@ -3,15 +3,12 @@ package com.taringa.dto;
 import java.util.Date;
 import org.springframework.hateoas.RepresentationModel;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 public class PersonaDto extends RepresentationModel<PersonaDto>{
 	
 	private Long id;
 	private String clave;
 	private String direccion;
 	private String documentoIdentidad;
-	@JsonFormat(pattern="dd-MM-yyyy")
 	private Date fechaNacimiento;
 	private String nombre;
 	private String sexo;

@@ -1,5 +1,8 @@
 package com.taringa.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,16 @@ public class PersonaServices {
 	
 	public Page<PersonaDto> findAll(Pageable pageable) {
 		Page<Persona> listaEntidad = personaRepository.findAll(pageable);
+		return listaEntidad.map(objectEntity  -> modelMapper.map(objectEntity, PersonaDto.class));
+	}
+	
+	public Page<PersonaDto> findAllText(String texto,Pageable pageable) {
+		Date fecha = null;
+		try {
+			fecha = new SimpleDateFormat("dd-MM-yyyy").parse(texto);
+		} catch (ParseException e) {
+		}
+		Page<Persona> listaEntidad = personaRepository.findAllText(texto,fecha,pageable);
 		return listaEntidad.map(objectEntity  -> modelMapper.map(objectEntity, PersonaDto.class));
 	}
 	
