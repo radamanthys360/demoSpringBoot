@@ -86,9 +86,9 @@ public class PersonaController {
 		personaServices.delete(id);
 	}
 	
-	@GetMapping(value="/findByUsuario/{nombreUsuario}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean  findByUsuario(@PathVariable("nombreUsuario") String nombreUsuario){
-		return personaServices.findByUsuario(nombreUsuario);
+	@GetMapping(value="/findByUsuario/{nombreUsuario}/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+	public Boolean  findByUsuario(@PathVariable("nombreUsuario") String nombreUsuario,@PathVariable("id") Long id){
+		return personaServices.findByUsuario(nombreUsuario,id);
 	}
 	
 }

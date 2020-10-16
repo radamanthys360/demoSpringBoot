@@ -13,8 +13,8 @@ import com.taringa.entity.Persona;
 
 public interface PersonaRepository <P> extends JpaRepository<Persona,Long>{
 	
-//    @Query("SELECT t FROM Persona t where t.usuario = :usuario") 
-//    Optional<Persona> findByUsuarioEquals(@Param("usuario") String usuario);
+    @Query("SELECT t FROM Persona t where t.usuario = :usuario and t.id != :id") 
+    Optional<Persona> findByUsuarioEquals(@Param("usuario") String usuario,@Param("id") Long id);
 	
 	Optional<Persona> findByUsuarioEquals(String usuario);
 	

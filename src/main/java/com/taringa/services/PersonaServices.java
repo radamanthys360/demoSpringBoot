@@ -35,12 +35,21 @@ public class PersonaServices {
 		}
 	}
 	
-	public Boolean findByUsuario(String nombreUsuario) {
-		if(personaRepository.findByUsuarioEquals(nombreUsuario).isPresent()) {
-			return true;
+	public Boolean findByUsuario(String nombreUsuario,Long id) {
+		if(id == -1) {
+			if(personaRepository.findByUsuarioEquals(nombreUsuario).isPresent()) {
+				return true;
+			}else {
+				return false;
+			}
 		}else {
-			return false;
+			if(personaRepository.findByUsuarioEquals(nombreUsuario,id).isPresent()) {
+				return true;
+			}else {
+				return false;
+			}
 		}
+
 	}
 	
 	public Page<PersonaDto> findAll(Pageable pageable) {
